@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  BIBLIOTECARIO
+  ALUNO
+}
+
+model User {
+  id       String @unique @default(cuid())
+  email    String @unique
+  password String
+  name     String
+  role     Role   @default(ALUNO)
+
+  loans Loan[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Book {
+  id          String @unique @default(cuid())
+  title       String
+  author      String
+  isbn        String @unique
+  totalCopies Int    @default(1)
+
+  loans Loan[]
+}
+
+model Loan {
+  id String @unique @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+
+  loanDate   DateTime  @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+
+  fineAmount Float   @default(0.0)
+  isFinePaid Boolean @default(false)
+}
