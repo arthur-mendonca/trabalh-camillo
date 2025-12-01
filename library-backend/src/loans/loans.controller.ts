@@ -5,9 +5,11 @@ import { UpdateLoanDto } from './dto/update-loan.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Loan } from './entities/loan.entity';
 
+@ApiTags('loans')
+@ApiBearerAuth()
 @Controller('loans')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'BIBLIOTECARIO')

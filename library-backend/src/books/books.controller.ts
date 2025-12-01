@@ -5,9 +5,11 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Book } from './entities/book.entity';
 
+@ApiTags('books')
+@ApiBearerAuth()
 @Controller('books')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'BIBLIOTECARIO')
