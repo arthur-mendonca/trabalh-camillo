@@ -1,24 +1,32 @@
-import { ArgumentsHost, Catch, ExceptionFilter, BadRequestException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { Response } from 'express';
 
 @Catch(Prisma.PrismaClientValidationError, Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
-    catch(exception: any, host: ArgumentsHost) {
+    catch(exception: Prisma.PrismaClientValidationError | Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
 
         let message = 'Requisição inválida';
-        let details: any = undefined;
+        let details: string | { code: string; meta?: Record<string, unknown> } | undefined = undefined;
 
+        let status = 400;
         if (exception instanceof Prisma.PrismaClientValidationError) {
             message = 'Dados inválidos para operação com o banco';
-            details = exception.message;
-        } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
-            message = 'Erro ao executar operação no banco';
-            details = { code: exception.code, meta: exception.meta };
+            details = String((exception as Error).message);
+        } else {
+            const known = exception;
+            if (known.code === 'P2025') {
+                message = 'Recurso não encontrado';
+                status = 404;
+                details = { code: known.code, meta: known.meta };
+            } else {
+                message = 'Erro ao executar operação no banco';
+                details = { code: known.code, meta: known.meta };
+            }
         }
 
-        const status = 400;
-        (response as any).status(status).json({ statusCode: status, message, details });
+        response.status(status).json({ statusCode: status, message, details });
     }
 }

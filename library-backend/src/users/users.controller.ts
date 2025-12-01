@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,6 +7,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiResponse } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import type { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -20,6 +21,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiResponse({
     status: 200,
     description: "Lista de usuários",
@@ -29,7 +32,19 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: "Usuário autenticado",
+    type: User,
+  })
+  async me(@Req() req: Request & { user?: { userId: string; role: string } }) {
+    return await this.usersService.findOne(req.user!.userId);
+  }
+
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: "Usuário encontrado",
@@ -40,6 +55,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: "Usuário atualizado",
@@ -50,12 +66,13 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: "Usuário removido",
-    type: User,
   })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.usersService.remove(id);
   }
 }
