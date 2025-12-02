@@ -104,4 +104,58 @@ export class LoansService {
     if (loan.fineAmount <= 0) throw new BadRequestException('Sem multa para pagar');
     return this.prisma.loan.update({ where: { id }, data: { isFinePaid: true, fineAmount: 0 } });
   }
+
+  async getLoansByStudent(userId: string) {
+    return this.prisma.loan.findMany({
+      where: { userId },
+      include: {
+        book: {
+          select: {
+            id: true,
+            title: true,
+            author: true,
+            isbn: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: { loanDate: 'desc' },
+    });
+  }
+
+  // Relatório 6.2: Livros em atraso
+  async getOverdueLoans() {
+    const now = new Date();
+    return this.prisma.loan.findMany({
+      where: {
+        returnDate: null,
+        dueDate: { lt: now },
+      },
+      include: {
+        book: {
+          select: {
+            id: true,
+            title: true,
+            author: true,
+            isbn: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: { dueDate: 'asc' },
+    });
+  }
 }
