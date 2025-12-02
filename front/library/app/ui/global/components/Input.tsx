@@ -9,7 +9,16 @@ type InputProps =
         className?: string;
     }
 
-export default function Input({ label, value, onChange, type, id, name, className }: InputProps) {
+export default function Input(
+    {
+        label,
+        value,
+        onChange,
+        type,
+        id,
+        name,
+        className
+    }: InputProps) {
     return (
         <>
             <label htmlFor={id} className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
