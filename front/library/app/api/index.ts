@@ -22,7 +22,6 @@ class Api {
             const token = bodyToken || bearer
             if (typeof window !== "undefined" && token) {
                 document.cookie = `auth_token=${token}; path=/; max-age=3600`
-
             }
             return response
         })

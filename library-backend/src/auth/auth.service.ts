@@ -24,7 +24,7 @@ export class AuthService {
       const user = await this.validateUser(email, password);
       const payload = { sub: user.id, role: user.role };
       const token = await this.jwt.signAsync(payload);
-      return { access_token: token };
+      return { access_token: token, user };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

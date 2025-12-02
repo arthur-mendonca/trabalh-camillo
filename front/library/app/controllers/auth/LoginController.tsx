@@ -4,7 +4,6 @@ import { LoginForm } from "../../ui/auth/components/LoginForm"
 import { login } from "@/app/api/auth/login"
 import { useRouter } from "next/navigation"
 import { useUserContext } from "@/app/context/UserContext"
-import { getMe } from "@/app/api/users/getMe"
 
 export const LoginController = () => {
   const [email, setEmail] = useState("")
@@ -16,11 +15,8 @@ export const LoginController = () => {
     e.preventDefault()
     const res = await login(email, password)
     if (res) {
+      setUser(res.user);
       router.push("/dashboard")
-      const getMeResponse = await getMe()
-      if (getMeResponse) {
-        setUser(getMeResponse)
-      }
     }
   }
 
