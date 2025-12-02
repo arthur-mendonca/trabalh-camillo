@@ -21,7 +21,8 @@ class Api {
             const bodyToken = (response.data && response.data.access_token as string | undefined)
             const token = bodyToken || bearer
             if (typeof window !== "undefined" && token) {
-                localStorage.setItem("token", token)
+                document.cookie = `auth_token=${token}; path=/; max-age=3600`
+
             }
             return response
         })
