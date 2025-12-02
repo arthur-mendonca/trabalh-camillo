@@ -5,7 +5,24 @@ class Api {
 
     constructor(api?: string) {
         this.api = axios.create({
-            baseURL: api || ((import.meta as { env?: { NEXT_PUBLIC_API_URL?: string } }).env?.NEXT_PUBLIC_API_URL || "http://localhost:3000"),
+            baseURL: api
+                || ((import.meta as { env?: { NEXT_PUBLIC_API_URL?: string } }).env?.NEXT_PUBLIC_API_URL
+                    || "http://localhost:3000"),
+        })
+
+        this.api.interceptors.request.use((config) => {
+            if (typeof document !== "undefined") {
+                const tokenCookie = document.cookie.split(";").find(c => c.trim().startsWith("auth_token="))
+                const token = tokenCookie ? tokenCookie.split("=")[1] : undefined
+                if (token) {
+                    if (config.headers instanceof AxiosHeaders) {
+                        config.headers.set("Authorization", `Bearer ${token}`)
+                    } else {
+                        config.headers = Object.assign({}, config.headers || {}, { Authorization: `Bearer ${token}` })
+                    }
+                }
+            }
+            return config
         })
 
         this.api.interceptors.response.use((response) => {
@@ -25,6 +42,12 @@ class Api {
             }
             return response
         })
+    }
+
+    clearToken() {
+        if (typeof document !== "undefined") {
+            document.cookie = "auth_token=; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+        }
     }
 }
 
