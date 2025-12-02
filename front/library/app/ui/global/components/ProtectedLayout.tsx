@@ -11,5 +11,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       router.replace("/")
     }
   }, [router])
-  return <>{children}</>
+
+  return <>
+    {children}
+  </>
 }
