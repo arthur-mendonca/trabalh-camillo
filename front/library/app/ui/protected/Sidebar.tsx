@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import {
     ChartPieIcon,
     ArrowRightIcon,
-    BookOpenIcon
+    BookOpenIcon,
+    UserIcon
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "@/app/context/UserContext";
 // import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +22,11 @@ const navItems = [
         name: "Livros",
         href: "/books",
         icon: BookOpenIcon,
+    },
+    {
+        name: "Meu perfil",
+        href: "/profile",
+        icon: UserIcon,
     },
 
 ];

@@ -1,10 +1,8 @@
-import { User } from "@/app/types/users"
+"use client"
+import { useUserContext } from "@/app/context/UserContext"
 
-type DashboardProps = {
-    user: User | null
-}
-
-export default function Dashboard({ user }: DashboardProps) {
+export default function Dashboard() {
+    const { user } = useUserContext()
     return (
         <div className="p-6">
             <h2 className="text-2xl font-semibold">Dashboard protegido</h2>

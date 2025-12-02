@@ -9,8 +9,6 @@ type loginResponse = {
 export const login = async (email: string, password: string): Promise<loginResponse | undefined> => {
     try {
         const res = await apiInstance.api.post("/auth/login", { email, password })
-        console.log("resposta login", res.data);
-
         return res.data
     } catch (error) {
         console.log(error)
