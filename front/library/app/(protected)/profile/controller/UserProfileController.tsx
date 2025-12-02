@@ -47,6 +47,7 @@ export default function UserProfileController() {
     }, [user])
 
     return {
+        role: user?.role,
         name: formData.name || "",
         email: formData.email || "",
         password: formData.password || "",
