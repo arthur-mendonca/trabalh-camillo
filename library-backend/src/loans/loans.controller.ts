@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards, Req } from '@nestjs/common';
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
@@ -7,6 +7,7 @@ import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Loan } from './entities/loan.entity';
+import type { Request } from 'express';
 
 @ApiTags('loans')
 @ApiBearerAuth()
@@ -57,5 +58,26 @@ export class LoansController {
   @ApiResponse({ status: 200, description: 'Multa paga', type: Loan })
   payFine(@Param('id') id: string) {
     return this.loansService.payFine(id);
+  }
+
+  @Get('reports/by-student/:userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, description: 'Empréstimos do aluno', type: [Loan] })
+  async getLoansByStudent(
+    @Param('userId') userId: string,
+    @Req() req: Request & { user?: { userId: string; role: string } }
+  ) {
+    
+    if (req.user?.role === 'ALUNO' && req.user.userId !== userId) {
+      throw new Error('Você só pode consultar seus próprios empréstimos');
+    }
+    return this.loansService.getLoansByStudent(userId);
+  }
+
+  @Get('reports/overdue')
+  @Roles('ADMIN', 'BIBLIOTECARIO')
+  @ApiResponse({ status: 200, description: 'Empréstimos em atraso', type: [Loan] })
+  getOverdueLoans() {
+    return this.loansService.getOverdueLoans();
   }
 }
