@@ -6,8 +6,7 @@ class Api {
     constructor(api?: string) {
         this.api = axios.create({
             baseURL: api
-                || ((import.meta as { env?: { NEXT_PUBLIC_API_URL?: string } }).env?.NEXT_PUBLIC_API_URL
-                    || "http://localhost:3000"),
+                || (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"),
         })
 
         this.api.interceptors.request.use((config) => {
