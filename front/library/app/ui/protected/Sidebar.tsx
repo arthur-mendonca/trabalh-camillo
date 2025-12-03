@@ -7,7 +7,9 @@ import {
     ChartPieIcon,
     ArrowRightIcon,
     BookOpenIcon,
-    UserIcon
+    UserIcon,
+    DocumentChartBarIcon,
+    ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "@/app/context/UserContext";
 // import { useAuth } from "@/hooks/useAuth";
@@ -24,6 +26,20 @@ const navItems = [
         icon: BookOpenIcon,
     },
     {
+        name: "Relatórios",
+        icon: DocumentChartBarIcon,
+        subItems: [
+            {
+                name: "Livros por aluno",
+                href: "/reports/by-student",
+            },
+            {
+                name: "Livros em atraso",
+                href: "/reports/overdue",
+            }
+        ]
+    },
+    {
         name: "Meu perfil",
         href: "/profile",
         icon: UserIcon,
@@ -35,6 +51,11 @@ export function Sidebar() {
     const pathname = usePathname();
     const { handleLogout } = useUserContext()
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
+
+    const toggleSubMenu = (itemName: string) => {
+        setOpenSubMenu(openSubMenu === itemName ? null : itemName);
+    };
 
     return (
         <>
@@ -80,22 +101,73 @@ export function Sidebar() {
                     {/* Links de Navegação */}
                     <ul className="flex-1 space-y-2 font-medium">
                         {navItems.map((item) => {
-                            const isActive = pathname && pathname.startsWith(item.href);
+                            const isActive = pathname && item.href && pathname.startsWith(item.href);
                             const Icon = item.icon;
+                            const hasSubItems = item.subItems && item.subItems.length > 0;
+                            const isSubMenuOpen = openSubMenu === item.name;
+                            const isAnySubItemActive = hasSubItems && item.subItems?.some(subItem => 
+                                pathname && pathname.startsWith(subItem.href)
+                            );
+
                             return (
                                 <li key={item.name}>
-                                    <Link
-                                        href={item.href}
-                                        onClick={() => setIsMobileOpen(false)} // Fecha ao clicar no mobile
-                                        className={`group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${isActive ? "bg-gray-100 dark:bg-gray-700" : ""
-                                            }`}
-                                    >
-                                        <Icon
-                                            className={`h-5 w-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white ${isActive ? "text-gray-900 dark:text-white" : ""
+                                    {hasSubItems ? (
+                                        <>
+                                            <button
+                                                onClick={() => toggleSubMenu(item.name)}
+                                                className={`group flex w-full items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${
+                                                    isAnySubItemActive ? "bg-gray-100 dark:bg-gray-700" : ""
                                                 }`}
-                                        />
-                                        <span className="ms-3">{item.name}</span>
-                                    </Link>
+                                            >
+                                                <Icon
+                                                    className={`h-5 w-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white ${
+                                                        isAnySubItemActive ? "text-gray-900 dark:text-white" : ""
+                                                    }`}
+                                                />
+                                                <span className="ms-3 flex-1 text-left whitespace-nowrap">{item.name}</span>
+                                                <ChevronDownIcon 
+                                                    className={`h-4 w-4 transition-transform ${
+                                                        isSubMenuOpen ? "rotate-180" : ""
+                                                    }`}
+                                                />
+                                            </button>
+                                            {isSubMenuOpen && (
+                                                <ul className="mt-2 space-y-2 pl-8">
+                                                    {item.subItems?.map((subItem) => {
+                                                        const isSubActive = pathname && pathname.startsWith(subItem.href);
+                                                        return (
+                                                            <li key={subItem.name}>
+                                                                <Link
+                                                                    href={subItem.href}
+                                                                    onClick={() => setIsMobileOpen(false)}
+                                                                    className={`flex items-center rounded-lg p-2 text-sm text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${
+                                                                        isSubActive ? "bg-gray-100 dark:bg-gray-700" : ""
+                                                                    }`}
+                                                                >
+                                                                    {subItem.name}
+                                                                </Link>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <Link
+                                            href={item.href || "#"}
+                                            onClick={() => setIsMobileOpen(false)}
+                                            className={`group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${
+                                                isActive ? "bg-gray-100 dark:bg-gray-700" : ""
+                                            }`}
+                                        >
+                                            <Icon
+                                                className={`h-5 w-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white ${
+                                                    isActive ? "text-gray-900 dark:text-white" : ""
+                                                }`}
+                                            />
+                                            <span className="ms-3">{item.name}</span>
+                                        </Link>
+                                    )}
                                 </li>
                             );
                         })}
