@@ -50,7 +50,7 @@ export function EmprestimoController() {
     if (!confirm("Confirmar devolução do livro?")) return
 
     try {
-      await api.api.put(`/loans/${loanId}/return`)
+      await api.api.post(`/loans/${loanId}/return`)
       fetchLoans()
     } catch (error) {
       console.error("Erro ao finalizar empréstimo:", error)
@@ -96,11 +96,10 @@ export function EmprestimoController() {
           {loans.map((loan) => (
             <Card
               key={loan.id}
-              className={`transition-all ${
-                (isAdmin || isBibliotecario)
+              className={`transition-all ${(isAdmin || isBibliotecario)
                   ? "cursor-pointer hover:shadow-lg hover:border-primary"
                   : ""
-              }`}
+                }`}
               onClick={(isAdmin || isBibliotecario) ? () => handleLoanClick(loan.id) : undefined}
             >
               <CardHeader>

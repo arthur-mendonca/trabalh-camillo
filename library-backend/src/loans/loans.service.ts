@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
@@ -92,7 +94,7 @@ export class LoansService {
       const daysLate = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
       fine = daysLate * ratePerDay;
     }
-    return this.prisma.loan.update({
+    return await this.prisma.loan.update({
       where: { id },
       data: { returnDate: now, fineAmount: fine, isFinePaid: false },
     });
@@ -132,7 +134,7 @@ export class LoansService {
   // Relatório 6.2: Livros em atraso
   async getOverdueLoans() {
     const now = new Date();
-    return this.prisma.loan.findMany({
+    return await this.prisma.loan.findMany({
       where: {
         returnDate: null,
         dueDate: { lt: now },
