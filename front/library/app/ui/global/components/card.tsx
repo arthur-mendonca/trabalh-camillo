@@ -1,5 +1,5 @@
 import type * as React from "react"
-import { cn } from "@/app/lib/utils"
+import { cn } from "@/lib/utils"
 
 // <CHANGE> Simplified Card component - removed complex grid layouts and data attributes
 function Card({ className, ...props }: React.ComponentProps<"div">) {
