@@ -13,10 +13,14 @@ function LoansPageContent() {
   const isEditing = params.get("id") !== null
 
   if (isNew || isEditing) {
-    return <LoanFormPage />
+    return <PageBox>
+      <LoanFormPage />
+    </PageBox>
   }
 
-  return <EmprestimoController />
+  return <PageBox>
+    <EmprestimoController />
+  </PageBox>
 }
 
 export default function LoansPage() {
