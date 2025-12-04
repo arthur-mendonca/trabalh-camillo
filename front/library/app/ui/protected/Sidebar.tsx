@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "@/app/context/UserContext";
 // import { useAuth } from "@/hooks/useAuth";
-
+import { HandCoins } from "lucide-react";
 const navItems = [
     {
         name: "Dashboard",
@@ -24,6 +24,11 @@ const navItems = [
         name: "Livros",
         href: "/books",
         icon: BookOpenIcon,
+    },
+    {
+        name: "Emprestimos",
+        href: "/loans",
+        icon: HandCoins,
     },
     {
         name: "Relatórios",
