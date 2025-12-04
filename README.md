@@ -20,6 +20,13 @@ npx prisma generate
 npx prisma migrate dev
 ```
 
+Para rodar o banco em desenvolvimento:
+
+- Inserir no .env:
+
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="qualquer-segredo-super-secreto"
+
 ## Executar em desenvolvimento
 
 ```bash
