@@ -6,7 +6,7 @@ class Api {
     constructor(api?: string) {
         this.api = axios.create({
             baseURL: api
-                || (process.env.NEXT_PUBLIC_API_URL || "https://library.72-60-1-117.nip.io/"),
+                || (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"),
         })
 
         this.api.interceptors.request.use((config) => {
