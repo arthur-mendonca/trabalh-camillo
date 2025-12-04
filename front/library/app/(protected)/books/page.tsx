@@ -1,12 +1,10 @@
-import PageBox from "@/app/ui/protected/PageBox";
-
+import PageBox from "@/app/ui/protected/PageBox"
+import { BooksController } from "./controller/BooksController"
 
 export default function BooksPage() {
-    return (
-        <PageBox>
-            <h2 className="text-2xl font-semibold">Livros</h2>
-
-
-        </PageBox>
-    )
+  return (
+    <PageBox>
+      <BooksController />
+    </PageBox>
+  )
 }
