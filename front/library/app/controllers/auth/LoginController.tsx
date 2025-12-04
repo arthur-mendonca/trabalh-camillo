@@ -1,4 +1,4 @@
- "use client"
+"use client"
 import { useState } from "react"
 import { LoginForm } from "../../ui/auth/components/LoginForm"
 import { login } from "@/app/api/auth/login"
@@ -13,10 +13,19 @@ export const LoginController = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     const res = await login(email, password)
-    if (res) {
-      setUser(res.user);
-      router.push("/dashboard")
+
+    if (res?.user) {
+      setUser(res.user)
+
+      if (res.user.role === "ALUNO") {
+        // aluno vai pra tela que ele PODE acessar
+        router.push("/my-loans")        // ou "/my-loans" se quiser
+      } else {
+        // ADMIN e BIBLIOTECARIO
+        router.push("/dashboard")
+      }
     }
   }
 
@@ -30,3 +39,4 @@ export const LoginController = () => {
     />
   )
 }
+
